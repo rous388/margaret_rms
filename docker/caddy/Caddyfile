@@ -1,0 +1,29 @@
+{$APP_DOMAIN} {
+    root * /var/www/html/public
+
+    encode zstd gzip
+
+    php_fastcgi app:9000 {
+        capture_stderr
+    }
+
+    file_server
+
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+
+    @blocked {
+        path /.env*
+        path /composer.*
+        path /package*.json
+        path /vite.config.*
+        path /storage/logs/*
+    }
+
+    respond @blocked 404
+}
+
